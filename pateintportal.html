@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#e0f2ff;
+  --card:#ffffffdd;
+  --text:#0f172a;
+  --accent:#2563eb;
+}
+
+/* NIGHT MODE */
+body.night{
+  --bg:#000;
+  --card:#111;
+  --text:#fffefe;
+  --accent:#474747;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+nav{
+  display:flex;
+  justify-content:space-between;
+  padding:20px 40px;
+}
+
+.theme button{
+  margin-left:10px;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--accent);
+  background:transparent;
+  color:var(--accent);
+  cursor:pointer;
+}
+
+/* HERO */
+.hero{
+  text-align:center;
+  padding:40px 20px;
+}
+
+.hero h1{
+  font-size:36px;
+}
+
+/* GRID */
+.container{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:25px;
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  background:var(--card);
+  padding:25px;
+  border-radius:25px;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* EMERGENCY */
+.emergency{
+  border:2px solid red;
+}
+
+/* BUTTON */
+.btn{
+  margin-top:10px;
+  padding:8px 18px;
+  border:none;
+  border-radius:20px;
+  background:var(--accent);
+  color:white;
+  cursor:pointer;
+}
+
+/* INPUT */
+input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h2>🏥 Soft Care</h2>
+  <div class="theme">
+    <button onclick="setTheme('day')">Day</button>
+    <button onclick="setTheme('night')">Night</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Patient Dashboard</h1>
+  <p>Manage your health, reports, and appointments in one place</p>
+</section>
+
+<div class="container">
+
+<!-- PROFILE -->
+<div class="card">
+  <div class="icon">👤</div>
+  <h3>My Profile</h3>
+  <p>Manage your health data and contacts</p>
+  <a href="profile.html"><button class="btn">Settings</button></a>
+</div>
+
+<!-- HEALTH TRACKING -->
+<div class="card">
+  <h3>📊 Health Tracking</h3>
+  <p>Monitor BP, sugar and trends</p>
+  <a href="health-tracking.html"><button class="btn">Open</button></a>
+</div>
+
+<!-- MEDICINE & FIRST AID -->
+<div class="card">
+  <div class="icon">💊</div>
+  <h3>Meds & First Aid</h3>
+  <p>Identify medicines and emergency care</p>
+  <a href="medicine.html"><button class="btn">Open</button></a>
+</div>
+
+<!-- APPOINTMENTS -->
+<div class="card">
+  <h3>📅 Appointments</h3>
+  <p>Book and manage doctor visits</p>
+  <a href="appointments.html"><button class="btn">Open</button></a>
+</div>
+
+
+<!-- REPORTS -->
+<div class="card">
+  <h3>🧾 Reports</h3>
+  <p>View and manage medical reports</p>
+  <a href="reports.html"><button class="btn">Open</button></a>
+</div>
+<!-- EMERGENCY -->
+<div class="card emergency">
+  <h3>🚑 Emergency</h3>
+  <p>Quick access to emergency help</p>
+  <a href="emergency.html"><button class="btn" style="background:red;">SOS</button></a>
+</div>
+
+</div>
+<script>
+function setTheme(mode){
+  if(mode==="night"){
+    document.body.classList.add("night");
+  } else {
+    document.body.classList.remove("night");
+  }
+}
+
+function check(){
+  let v=document.getElementById("sym").value.toLowerCase();
+  let res="Low Risk";
+
+  if(v.includes("fever")) res="Medium Risk";
+  if(v.includes("pain")) res="High Risk";
+
+  document.getElementById("result").innerText=res;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports Storage - Soft Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin: 0; color: var(--primary); }
+
+        .back-link { text-decoration: none; color: var(--text-light); font-weight: 500; }
+
+        /* FORM SECTION */
+        .add-report-card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-field { display: flex; flex-direction: column; gap: 8px; }
+        .form-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-light); }
+        .form-field input, .form-field select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .btn-save {
+            grid-column: span 2;
+            margin-top: 10px;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-save:hover { opacity: 0.9; }
+
+        /* LIST SECTION */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .report-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .report-card:hover { border-color: var(--primary-light); transform: translateY(-5px); box-shadow: var(--shadow); }
+
+        .report-type {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .report-card h3 { margin: 0 0 5px; font-size: 1.1rem; }
+        .report-card .meta { font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px; }
+
+        .card-actions { display: flex; gap: 8px; }
+        .btn-small {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-view { background: var(--primary-light); color: var(--primary); }
+        .btn-download { background: #f1f5f9; color: var(--text); }
+        .btn-delete { background: #fff1f2; color: var(--danger); }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img, .modal-content iframe {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .empty-state { text-align: center; color: var(--text-light); padding: 50px; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>Medical Reports</h1>
+            <p style="color: var(--text-light); margin: 4px 0 0;">Securely store and manage your test results</p>
+        </div>
+        <a href="pateintportal.html" class="back-link">← Back to Portal</a>
+    </header>
+
+    <!-- ADD FORM -->
+    <div class="add-report-card">
+        <h2 style="font-size: 1.1rem; margin-top: 0; margin-bottom: 20px;">Upload New Report</h2>
+        <div class="grid-form">
+            <div class="form-field">
+                <label>Report Title</label>
+                <input type="text" id="title" placeholder="e.g. Blood Test Result">
+            </div>
+            <div class="form-field">
+                <label>Doctor Name</label>
+                <input type="text" id="doctor" placeholder="Dr. Sharma">
+            </div>
+            <div class="form-field">
+                <label>Date</label>
+                <input type="date" id="date">
+            </div>
+            <div class="form-field">
+                <label>Report Type</label>
+                <select id="type">
+                    <option value="Lab Result">Lab Result</option>
+                    <option value="Prescription">Prescription</option>
+                    <option value="X-Ray / Scan">X-Ray / Scan</option>
+                    <option value="Discharge Summary">Discharge Summary</option>
+                </select>
+            </div>
+            <div class="form-field" style="grid-column: span 2;">
+                <label>Attach File (Image/PDF)</label>
+                <input type="file" id="fileInput" accept="image/*,application/pdf">
+            </div>
+            <button class="btn-save" onclick="saveReport()">Save Report</button>
+        </div>
+    </div>
+
+    <!-- LIST -->
+    <h2 style="font-size: 1.25rem; margin-bottom: 20px;">Saved Reports 📄</h2>
+    <div id="reportsGrid" class="reports-grid">
+        <!-- Reports inserted here -->
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <button class="btn-close-modal" onclick="closeModal()">✕ Close</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    function saveReport() {
+        const title = document.getElementById('title').value;
+        const doctor = document.getElementById('doctor').value;
+        const date = document.getElementById('date').value;
+        const type = document.getElementById('type').value;
+        const fileInput = document.getElementById('fileInput');
+
+        if (!title || !date || !fileInput.files[0]) {
+            alert("Please fill in title, date, and attach a file.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const base64 = e.target.result;
+            const report = {
+                id: Date.now(),
+                title,
+                doctor,
+                date,
+                type,
+                file: base64,
+                fileName: file.name,
+                fileType: file.type,
+                createdAt: new Date().toISOString()
+            };
+
+            const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+            reports.push(report);
+            localStorage.setItem('reports', JSON.stringify(reports));
+
+            alert("Report saved successfully!");
+            clearForm();
+            loadReports();
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function clearForm() {
+        document.getElementById('title').value = '';
+        document.getElementById('doctor').value = '';
+        document.getElementById('date').value = '';
+        document.getElementById('fileInput').value = '';
+    }
+
+    function loadReports() {
+        const grid = document.getElementById('reportsGrid');
+        const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+
+        grid.innerHTML = "";
+        
+        if (reports.length === 0) {
+            grid.innerHTML = '<div class="empty-state">No medical reports found. Upload your first one!</div>';
+            return;
+        }
+
+        reports.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        reports.forEach(r => {
+            const card = document.createElement('div');
+            card.className = 'report-card';
+            card.innerHTML = `
+                <span class="report-type">${r.type}</span>
+                <h3>${r.title}</h3>
+                <div class="meta">📅 ${r.date} | 👨‍⚕️ ${r.doctor || 'Unknown'}</div>
+                <div class="card-actions">
+                    <button class="btn-small btn-view" onclick="viewFile(${r.id})">View</button>
+                    <a href="${r.file}" download="${r.fileName}" class="btn-small btn-download">Download</a>
+                    <button class="btn-small btn-delete" onclick="deleteReport(${r.id})">Delete</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function viewFile(id) {
+        const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+        const report = reports.find(r => r.id === id);
+        if (!report) return;
+
+        const body = document.getElementById('modalBody');
+        body.innerHTML = "";
+
+        if (report.fileType.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = report.file;
+            body.appendChild(img);
+        } else if (report.fileType === 'application/pdf') {
+            const iframe = document.createElement('iframe');
+            iframe.src = report.file;
+            iframe.width = "600";
+            iframe.height = "500";
+            body.appendChild(iframe);
+        } else {
+            body.innerHTML = "<p>Preview not available for this file type.</p>";
+        }
+
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('modalBody').innerHTML = "";
+    }
+
+    function deleteReport(id) {
+        if (!confirm("Delete this report?")) return;
+        let reports = JSON.parse(localStorage.getItem('reports') || '[]');
+        reports = reports.filter(r => r.id !== id);
+        localStorage.setItem('reports', JSON.stringify(reports));
+        loadReports();
+    }
+
+    // Initial Load
+    loadReports();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meds & First Aid - Soft Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --emergency: #ef4444;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 0;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 2.2rem; margin-bottom: 10px; color: var(--primary); }
+        header p { color: var(--text-light); }
+
+        .search-container {
+            position: relative;
+            background: var(--card);
+            border-radius: 24px;
+            padding: 10px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .search-container input {
+            flex: 1;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-search:hover { background: var(--primary-dark); }
+
+        .results { display: none; }
+
+        .emergency-banner {
+            background: #fef2f2;
+            border: 2px solid var(--emergency);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            color: #991b1b;
+        }
+
+        .emergency-banner h2 { margin: 0 0 15px; display: flex; align-items: center; gap: 10px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card h3 { margin: 0 0 15px; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .card p { margin: 5px 0; font-size: 0.95rem; }
+        .card b { color: var(--text); }
+
+        .full-width { grid-column: span 2; }
+
+        .disclaimer {
+            margin-top: 50px;
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .loading { display: none; text-align: center; padding: 20px; font-weight: 500; color: var(--primary); }
+
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>💊 Meds & First Aid</h1>
+        <p>Describe your symptoms or condition to get instant guidance</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="symptomInput" placeholder="e.g. Fever, Headache, Bleeding, Choking..." onkeypress="if(event.key==='Enter') analyze()">
+        <button class="btn-search" onclick="analyze()">Analyze</button>
+    </div>
+
+    <div id="loading" class="loading">Analyzing symptoms... 🩺</div>
+
+    <div id="results" class="results">
+        <!-- Emergency Alert -->
+        <div id="emergencySection" class="emergency-banner" style="display: none;">
+            <h2>🚨 EMERGENCY FIRST AID</h2>
+            <ul id="firstAidSteps" style="padding-left: 20px; font-weight: 600;"></ul>
+            <p style="margin-top: 15px; font-weight: 700; text-decoration: underline;">Call 108 immediately if someone is in danger!</p>
+        </div>
+
+        <div class="grid">
+            <!-- Medicine Card -->
+            <div class="card" id="medicineCard">
+                <h3>💊 Recommended Medicine</h3>
+                <p>Medicine: <b id="res-med">--</b></p>
+                <p>Precaution: <b id="res-pre">--</b></p>
+            </div>
+
+            <!-- Remedies Card -->
+            <div class="card" id="remedyCard">
+                <h3>🏠 Home Remedies</h3>
+                <p id="res-rem">--</p>
+            </div>
+
+            <!-- Advice Card -->
+            <div class="card full-width">
+                <h3>👨‍⚕️ Doctor's Advice</h3>
+                <p id="res-adv" style="font-weight: 500;">--</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        ⚠️ <b>Disclaimer:</b> This system provides basic first-aid and over-the-counter medicine guidance only. 
+        It is NOT a substitute for professional medical advice. Always consult a doctor before taking any medication.
+    </div>
+</div>
+
+<script>
+    // Dataset for Client-side fallback (Netlify support)
+    const medicalData = {
+        medicines: [
+            { "condition": "Fever", "medicine": "Paracetamol", "remedy": "Hydration, rest, sponging", "precaution": "Max 4g/day", "advice": ">3 days → doctor" },
+            { "condition": "Mild Pain", "medicine": "Ibuprofen", "remedy": "Warm compress", "precaution": "Avoid empty stomach", "advice": "Gastric history → consult" },
+            { "condition": "Severe Pain", "medicine": "Diclofenac", "remedy": "Ice pack", "precaution": "Kidney risk", "advice": "Use short-term only" },
+            { "condition": "Allergy", "medicine": "Cetirizine", "remedy": "Avoid allergen", "precaution": "Drowsiness", "advice": "Persistent → allergy test" },
+            { "condition": "Cold", "medicine": "Chlorpheniramine", "remedy": "Steam inhalation", "precaution": "Sedation", "advice": "Avoid driving" },
+            { "condition": "Vomiting", "medicine": "Ondansetron", "remedy": "ORS, ginger", "precaution": "QT prolongation", "advice": "Frequent → investigate" },
+            { "condition": "Acidity", "medicine": "Omeprazole", "remedy": "Avoid spicy food", "precaution": "Long-term B12 deficiency", "advice": "Chronic → endoscopy" },
+            { "condition": "Diarrhea", "medicine": "ORS", "remedy": "Banana, rice", "precaution": "Dehydration risk", "advice": "Blood in stool → urgent" },
+            { "condition": "Asthma", "medicine": "Salbutamol", "remedy": "Steam", "precaution": "Overuse harmful", "advice": "Maintenance inhaler needed" },
+            { "condition": "Bleeding", "type": "emergency", "steps": ["Apply direct pressure", "Use clean cloth", "Elevate wound", "Call emergency (108)"]},
+            { "condition": "Choking", "type": "emergency", "steps": ["5 back blows", "5 chest thrusts", "Repeat", "Call 108"]}
+        ],
+        firstAid: {
+            "bleeding": ["Apply direct pressure", "Use clean cloth", "Elevate wound", "Call 108"],
+            "choking": ["5 back blows", "5 chest thrusts", "Repeat", "Call 108"],
+            "burn": ["Cool with water 20 min", "No ice", "Cover clean"],
+            "snake": ["Keep still", "Bandage", "Hospital ASAP"]
+        }
+    };
+
+    async function analyze() {
+        const input = document.getElementById('symptomInput').value.trim();
+        if (!input) return;
+
+        const resultsDiv = document.getElementById('results');
+        const loading = document.getElementById('loading');
+        const emergencySection = document.getElementById('emergencySection');
+        
+        loading.style.display = 'block';
+        resultsDiv.style.display = 'none';
+        emergencySection.style.display = 'none';
+
+        try {
+            // Try Backend first
+            const response = await fetch('http://localhost:5001/api/medicine/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symptoms: input })
+            });
+
+            if(!response.ok) throw new Error("Offline");
+            const data = await response.json();
+            displayResults(data);
+
+        } catch (err) {
+            console.warn('Backend offline, using Client-side engine...');
+            performLocalSearch(input);
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    function performLocalSearch(query) {
+        query = query.toLowerCase();
+        const resultsDiv = document.getElementById('results');
+        const emergencySection = document.getElementById('emergencySection');
+        
+        // 1. Emergency Check
+        const emergencyKey = Object.keys(medicalData.firstAid).find(k => query.includes(k));
+        if (emergencyKey) {
+            emergencySection.style.display = 'block';
+            document.getElementById('firstAidSteps').innerHTML = medicalData.firstAid[emergencyKey].map(s => `<li>${s}</li>`).join('');
+        }
+
+        // 2. Med Match
+        const match = medicalData.medicines.find(m => query.includes(m.condition.toLowerCase()));
+        if (match && match.medicine) {
+            document.getElementById('res-med').innerText = match.medicine;
+            document.getElementById('res-pre').innerText = match.precaution;
+            document.getElementById('res-rem').innerText = match.remedy;
+            document.getElementById('res-adv').innerText = match.advice;
+        } else {
+            document.getElementById('res-med').innerText = "Consult Doctor";
+            document.getElementById('res-rem').innerText = "No direct match found. Try another symptom.";
+            document.getElementById('res-adv').innerText = "Please contact a professional.";
+        }
+        resultsDiv.style.display = 'block';
+    }
+
+    function displayResults(data) {
+        const emergencySection = document.getElementById('emergencySection');
+        if (data.severity === 'emergency') {
+            emergencySection.style.display = 'block';
+            document.getElementById('firstAidSteps').innerHTML = data.firstAid.map(step => `<li>${step}</li>`).join('');
+        }
+        if (data.medicines && data.medicines.length > 0) {
+            const med = data.medicines[0];
+            document.getElementById('res-med').innerText = med.medicine;
+            document.getElementById('res-pre').innerText = med.precaution;
+            document.getElementById('res-rem').innerText = med.remedy;
+        }
+        document.getElementById('res-adv').innerText = data.advice;
+        document.getElementById('results').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

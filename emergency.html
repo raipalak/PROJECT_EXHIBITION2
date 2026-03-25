@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMERGENCY SOS - Soft Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emergency: #ef4444;
+            --emergency-dark: #b91c1c;
+            --bg: #fef2f2;
+            --card: #ffffff;
+            --text: #0f172a;
+            --primary: #2563eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background: var(--card);
+            padding: 40px 30px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--emergency);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sos-button {
+            width: 180px;
+            height: 180px;
+            background: var(--emergency);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse 2s infinite;
+            margin: 30px 0;
+            transition: transform 0.2s;
+        }
+
+        .sos-button:active { transform: scale(0.95); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 30px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border: 1px solid #fee2e2;
+            border-radius: 20px;
+            background: #fff;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover { background: #fecaca; border-color: var(--emergency); }
+
+        .action-btn span { font-size: 1.5rem; }
+
+        .medical-info {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .medical-info h3 { margin: 0 0 10px; font-size: 1rem; color: #64748b; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+        .info-row b { color: var(--emergency); }
+
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚨 EMERGENCY</h1>
+    <p style="color: #64748b; font-weight: 500;">Press the button for immediate help</p>
+
+    <button class="sos-button" onclick="triggerSOS()">SOS</button>
+
+    <div class="action-grid">
+        <button class="action-btn" onclick="callAmbulance()">
+            <span>🚑</span> Call Ambulance
+        </button>
+        <button class="action-btn" onclick="openHospitals()">
+            <span>🏥</span> Nearby Hospitals
+        </button>
+        <button class="action-btn" onclick="shareLocation()">
+            <span>📍</span> Share Location
+        </button>
+        <button class="action-btn" onclick="triggerSOS()">
+            <span>🔔</span> Alert Contacts
+        </button>
+    </div>
+
+    <div class="medical-info">
+        <h3>Medical Profile (Quick View)</h3>
+        <div class="info-row">Name: <b id="ui-name">Loading...</b></div>
+        <div class="info-row">Blood Group: <b id="ui-blood">O+</b></div>
+        <div class="info-row">Allergies: <b id="ui-allergies">None</b></div>
+        <div class="info-row">Age: <b id="ui-age">--</b></div>
+    </div>
+
+    <a href="pateintportal.html" class="back-link">← Cancel and return to portal</a>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:5001/api/emergency/sos';
+    let userProfile = JSON.parse(localStorage.getItem('patientProfile') || '{}');
+
+    // Load profile into UI
+    function initUI() {
+        if (userProfile.name) {
+            document.getElementById('ui-name').innerText = userProfile.name;
+            document.getElementById('ui-blood').innerText = userProfile.bloodGroup || 'O+';
+            document.getElementById('ui-allergies').innerText = userProfile.allergies || 'None';
+            document.getElementById('ui-age').innerText = userProfile.age || '--';
+        }
+    }
+
+    function callAmbulance() {
+        window.location.href = "tel:108";
+    }
+
+    async function triggerSOS() {
+        const contact = userProfile.emergencyContact || "simulated helpline";
+        if (confirm(`Send SOS alert to your contact (${contact}) and call ambulance?`)) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            location: locationUrl,
+                            message: `🚨 SOS EMERGENCY! ${userProfile.name || 'User'} needs immediate help.`,
+                            contact: userProfile.emergencyContact,
+                            userName: userProfile.name,
+                            bloodGroup: userProfile.bloodGroup
+                        })
+                    });
+                    
+                    if (res.ok) {
+                        alert(`SOS Alert Sent to ${contact}! Redirecting to emergency call...`);
+                    } else {
+                        throw new Error("Offline");
+                    }
+                } catch (err) {
+                    console.warn("Backend offline, triggering local emergency protocol...");
+                    alert(`SOS PROTOCOL: Emergency contact (${contact}) will be dialed. Please share your location manually if possible.`);
+                } finally {
+                    window.location.href = `tel:${userProfile.emergencyContact || '108'}`;
+                }
+            }, (err) => {
+                alert("Geolocation failed. Triggering emergency call anyway...");
+                window.location.href = "tel:108";
+            });
+        }
+    }
+
+    function shareLocation() {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const link = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            const shareData = {
+                title: 'My Emergency Location',
+                text: `🚨 SOS! My current location is:`,
+                url: link
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.error('Share failed:', err);
+                }
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(`${shareData.text} ${link}`);
+                alert("Location link copied to clipboard! You can now paste it in any app.");
+            }
+        });
+    }
+
+    function openHospitals() {
+        window.open("https://www.google.com/maps/search/hospitals+near+me");
+    }
+
+    initUI();
+</script>
+
+</body>
+</html>

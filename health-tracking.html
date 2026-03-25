@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Tracking Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --text: #0f172a;
+    --border: #e2e8f0;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --success: #10b981;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+}
+
+.header {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.full-width { grid-column: span 2; }
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.alert-box {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Health Dashboard</h1>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h3>Add Entry</h3>
+
+<input id="sys" placeholder="Systolic (120)">
+<input id="dia" placeholder="Diastolic (80)">
+<input id="sugarBefore" placeholder="Sugar Before">
+<input id="sugarAfter" placeholder="Sugar After">
+<input id="notes" placeholder="Notes">
+
+<button class="btn" onclick="saveEntry()">Save</button>
+
+<div id="alertBox" class="alert-box"></div>
+</div>
+
+<div class="card">
+<h3>Graph</h3>
+<canvas id="chart"></canvas>
+</div>
+
+<div class="card full-width">
+<h3>History</h3>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>BP</th>
+<th>Sugar</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
+
+</div>
+
+<script src="health.js"></script>
+</body>
+</html>

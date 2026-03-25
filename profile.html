@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Soft Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin: 0; color: var(--primary); }
+        .back-link { text-decoration: none; color: var(--text-light); font-weight: 500; }
+
+        .profile-card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .form-section { margin-bottom: 25px; }
+        .form-section h3 { font-size: 1rem; color: var(--text-light); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 15px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .form-field.full { grid-column: span 2; }
+        
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-light); }
+        input, select, textarea {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-save:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>👤 My Profile</h1>
+        <a href="pateintportal.html" class="back-link">← Done</a>
+    </header>
+
+    <div class="profile-card">
+        <!-- Personal Info -->
+        <div class="form-section">
+            <h3>Personal Information</h3>
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your name">
+                </div>
+                <div class="form-field">
+                    <label>Age</label>
+                    <input type="number" id="age" placeholder="e.g. 25">
+                </div>
+                <div class="form-field">
+                    <label>Blood Group</label>
+                    <select id="bloodGroup">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div class="form-field full">
+                    <label>Your Phone No</label>
+                    <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX">
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Info -->
+        <div class="form-section">
+            <h3>🚨 Emergency Contact</h3>
+            <div class="form-field full">
+                <label>Emergency Contact No (SOS will alert this)</label>
+                <input type="tel" id="emergencyContact" placeholder="+91 XXXXX XXXXX">
+            </div>
+            <div class="form-field full">
+                <label>Existing Medical Conditions / Allergies</label>
+                <textarea id="allergies" rows="3" placeholder="e.g. Asthma, Penicillin Allergy..."></textarea>
+            </div>
+        </div>
+
+        <button class="btn-save" onclick="saveProfile()">
+            Save Profile Changes
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="toast">Profile Updated Successfully! ✅</div>
+
+<script>
+    function loadProfile() {
+        const profile = JSON.parse(localStorage.getItem('patientProfile') || '{}');
+        if (profile.name) {
+            document.getElementById('name').value = profile.name;
+            document.getElementById('age').value = profile.age;
+            document.getElementById('bloodGroup').value = profile.bloodGroup;
+            document.getElementById('phone').value = profile.phone;
+            document.getElementById('emergencyContact').value = profile.emergencyContact;
+            document.getElementById('allergies').value = profile.allergies;
+        }
+    }
+
+    function saveProfile() {
+        const profile = {
+            name: document.getElementById('name').value,
+            age: document.getElementById('age').value,
+            bloodGroup: document.getElementById('bloodGroup').value,
+            phone: document.getElementById('phone').value,
+            emergencyContact: document.getElementById('emergencyContact').value,
+            allergies: document.getElementById('allergies').value,
+            updatedAt: new Date().toISOString()
+        };
+
+        if (!profile.name || !profile.emergencyContact) {
+            alert("Name and Emergency Contact are required!");
+            return;
+        }
+
+        localStorage.setItem('patientProfile', JSON.stringify(profile));
+        
+        // Show Success Toast
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // Load data on start
+    loadProfile();
+</script>
+
+</body>
+</html>
