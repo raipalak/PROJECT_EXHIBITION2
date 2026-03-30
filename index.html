@@ -1,17 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SoftCare - Patient Management</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-  </head>
-  <body class="bg-[#f8fafc] text-slate-900 font-sans">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soft Care</title>
+
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<nav>
+  <h2>🏥 Soft Care</h2>
+  <div>
+    <button onclick="setTheme('day')">Day</button>
+    <button onclick="setTheme('night')">Night</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Smart AI Healthcare </h1>
+  <p>Manage patients, reports, and healthcare in one place</p>
+
+  <!-- 🔥 PULSE LINE -->
+ <div class="pulse-wrapper">
+  <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+    
+    <!-- SAME PATH REPEATED TWICE FOR SMOOTH LOOP -->
+    <path class="pulse-line"
+      d="
+      M0 50 L50 50 L70 20 L90 80 L110 50 L150 50 L170 30 L190 70 L210 50 L250 50
+
+      M250 50 L300 50 L320 20 L340 80 L360 50 L400 50 L420 30 L440 70 L460 50 L500 50
+
+      M500 50 L550 50 L570 20 L590 80 L610 50 L650 50 L670 30 L690 70 L710 50 L750 50
+
+      M750 50 L800 50 L820 20 L840 80 L860 50 L900 50 L920 30 L940 70 L960 50 L1000 50
+      "/>
+
+  </svg>
+</div>
+
+</section>
+
+<!-- OVERVIEW -->
+<div class="overview">
+  <div class="stat"><h3>12</h3><p>Appointments</p></div>
+  <div class="stat"><h3>45</h3><p>Patients</p></div>
+  <div class="stat"><h3>8</h3><p>Reports Pending</p></div>
+  <div class="stat"><h3>3</h3><p>Emergencies</p></div>
+</div>
+
+<div class="section-title">Main Features</div>
+
+<!-- FEATURES -->
+<div class="container">
+
+  <div class="card">
+    <div class="icon">🧑‍⚕️</div>
+    <h3>Patient Portal</h3>
+    <p>Upload reports and track health.</p>
+    <a href="pateintportal.html" class="btn">Open</a>
+  </div>
+
+  <div class="card">
+    <div class="icon">👨‍⚕️</div>
+    <h3>Doctor Panel</h3>
+    <p>Manage patients & appointments.</p>
+    <a href="#" class="btn">Open</a>
+  </div>
+
+  <div class="card">
+    <div class="icon">🧑‍💼</div>
+    <h3>Admin Panel</h3>
+    <p>Control full system.</p>
+    <a href="#" class="btn">Open</a>
+  </div>
+
+  <div class="card">
+    <div class="icon">🤖</div>
+    <h3>AI Assistant</h3>
+    <p>Smart health insights.</p>
+    <a href="medicine.html" class="btn">Try</a>
+  </div>
+
+  <div class="card">
+    <div class="icon">🚑</div>
+    <h3>Emergency</h3>
+    <p>Instant emergency access.</p>
+    <a href="emergency.html" class="btn">Alert</a>
+  </div>
+
+  <div class="card">
+    <div class="icon">💊</div>
+    <h3>Prescriptions</h3>
+    <p>View and manage medicines.</p>
+    <a href="medicine.html" class="btn">View</a>
+  </div>
+
+</div>
+
+<footer>
+Soft Care • 2026
+</footer>
+
+<script src="script.js"></script>
+</body>
 </html>
